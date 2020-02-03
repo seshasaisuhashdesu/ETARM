@@ -29,7 +29,7 @@ class RuleData:
 
 
 #data = pd.read_csv(r'Datasets/chess.txt',sep=" ",header=None)
-data = pd.read_csv(r'Datasets/sample.txt',sep=" ",header=None)
+data = pd.read_csv(r'Documents/Datasets/sample.txt',sep=" ",header=None)
 data.head()
 #df = pd.read_csv(filepath, chunksize=1, header=None, encoding='utf-8')
 
@@ -89,8 +89,9 @@ data.iloc[0].values
 
 minsup=0
 minconf=0.8
-k=10
-
+k=3
+l=list()
+r=list()
 
 
 # In[10]:
@@ -132,14 +133,14 @@ class MyHeap:
 
 
 def support(rule=((),())):
-    '''if(isinstance(rule[0],int) or isinstance(rule[0],float)):
+    if(isinstance(rule[0],int) or isinstance(rule[0],float)):
         if(isinstance(rule[1],int) or isinstance(rule[1],float)):
             rule=[[rule[0]],[rule[1]]]
         elif(isinstance(rule[1],tuple)):
             rule=[[rule[0]],list(rule[1])]
     elif(isinstance(rule[1],int) or isinstance(rule[1],float)):
         if(isinstance(rule[0],tuple)):
-            rule=[list(rule[0]), [rule[1]]]'''
+            rule=[list(rule[0]), [rule[1]]]
     items=rule[0]+rule[1]
     sumRule=0
     for i in range(len(data)):
@@ -156,7 +157,7 @@ def support(rule=((),())):
 # In[13]:
 
 
-
+support(((2,3),(1)))
 
 
 # In[14]:
@@ -164,14 +165,14 @@ def support(rule=((),())):
 
 def confidence(rule=((),())):
     #print(rule)
-    '''if(isinstance(rule[0],int) or isinstance(rule[0],float)):
+    if(isinstance(rule[0],int) or isinstance(rule[0],float)):
         if(isinstance(rule[1],int) or isinstance(rule[1],float)):
             rule=[[rule[0]],[rule[1]]]
         elif(isinstance(rule[1],tuple)):
             rule=[[rule[0]],list(rule[1])]
     elif(isinstance(rule[1],int) or isinstance(rule[1],float)):
         if(isinstance(rule[0],tuple)):
-            rule=[list(rule[0]), [rule[1]]]'''
+            rule=[list(rule[0]), [rule[1]]]
     items=rule[0]+rule[1]
     #print(rule)
     #print(items)
@@ -225,28 +226,25 @@ L=MyHeap(key=lambda x:-x.support)
 # In[21]:
 
 
-confidence(((2,3),(1,)))
+confidence(((2,3),(1)))
 
 
 # In[22]:
 
 
-def save(L,k,sup,conf,expandSide,rule=((),())):
-    '''if(isinstance(rule[0],int) or isinstance(rule[0],float)):
+def save(L,k,sup,conf,rule=((),())):
+    if(isinstance(rule[0],int) or isinstance(rule[0],float)):
         if(isinstance(rule[1],int) or isinstance(rule[1],float)):
             rule=[[rule[0]],[rule[1]]]
         elif(isinstance(rule[1],tuple)):
             rule=[[rule[0]],list(rule[1])]
     elif(isinstance(rule[1],int) or isinstance(rule[1],float)):
         if(isinstance(rule[0],tuple)):
-            rule=[list(rule[0]), [rule[1]]]'''
+            rule=[list(rule[0]), [rule[1]]]
     expFlag=True
-    if(max(rule[0])==largestElement and expandSide=="left"):
-        expFlag=False
-    elif(max(rule[1])!=largestElement and expandSide=="right"):
+    if(rule[0][0]==largestElement):
         expFlag=False
     L.push(RuleData(rule,sup,conf,expFlag))
-    ruleDetails[rule]=sup
     if(expFlag):
         R.push(RuleData(rule,sup,conf,expFlag))
     ruleData=RuleData()
@@ -296,17 +294,16 @@ for i in range(len(items)):
             conf1=confidence(((items[i],),(items[j],)))
             conf2=confidence(((items[j],),(items[i],)))
             if conf1>=minconf:
-                #ruleDetails[(items[i],items[j])]=support(((items[i],),(items[j],)))
-                #print(conf1)
-                #print(((items[i],),(items[j],)))
-                #L = save(L,k,ruleDetails[(items[i],items[j])],conf1,((items[i],),(items[j],)))
-                L = save(L,k,support(((items[i],),(items[j],))),conf1,"left",((items[i],),(items[j],)))
+                ruleDetails[(items[i],items[j])]=support(((items[i],),(items[j],)))
+                print(conf1)
+                print(((items[i],),(items[j],)))
+                L = save(L,k,ruleDetails[(items[i],items[j])],conf1,((items[i],),(items[j],)))
+                
             if conf2>=minconf:
-                #ruleDetails[(items[j],items[i])]=support(((items[j],),(items[i],)))
-                #print(conf2)
-                #print(((items[j],),(items[i],)))
-                #L = save(L,k,ruleDetails[(items[j],items[i])],conf2,((items[j],),(items[i],)))
-                L = save(L,k,support(((items[j],),(items[i],))),conf2,"left",((items[j],),(items[i],)))
+                ruleDetails[(items[j],items[i])]=support(((items[j],),(items[i],)))
+                print(conf2)
+                print(((items[j],),(items[i],)))
+                L = save(L,k,ruleDetails[(items[j],items[i])],conf2,((items[j],),(items[i],)))
                 
 
 
@@ -351,8 +348,8 @@ def ExpandL(ruleData,L,R,k):
         if  sup>=minsup:
             conf=confidence(rnew)
             if conf>=minconf:
-                #print(L, "HELLO")
-                L=save(L,k,sup,conf,"left",rnew)
+                print(L, "HELLO")
+                L=save(L,k,sup,conf,rnew)
     return L
 
 
@@ -378,7 +375,7 @@ def ExpandR(ruleData,L,R,k):
         if  sup>=minsup:
             conf=confidence(rnew)
             if conf>=minconf:
-                L=save(L,k,sup,conf,"right",rnew)
+                L=save(L,k,sup,conf,rnew)
     return L
 
 
@@ -427,11 +424,13 @@ for i in L._data:
 # In[32]:
 
 
-#L.length()
+L.length()
 
 
 # In[33]:
 
+
+ruleDetails
 
 
 # In[34]:

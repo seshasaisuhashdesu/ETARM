@@ -31,19 +31,6 @@ class RuleData:
 #data = pd.read_csv(r'Datasets/chess.txt',sep=" ",header=None)
 data = pd.read_csv(r'Datasets/sample.txt',sep=" ",header=None)
 data.head()
-#df = pd.read_csv(filepath, chunksize=1, header=None, encoding='utf-8')
-
-
-# In[4]:
-
-
-# data.drop(37,axis=1,inplace=True)
-# data.head()
-# #data
-
-
-# In[5]:
-
 
 itemset = list(set(data.values.flatten()))
 itemset
@@ -64,19 +51,6 @@ for i in range(len(data)):
 tidsets
 
 
-# In[7]:
-
-
-# tidsets=[[]]
-# for i in itemset:
-#     tidsets.append([])
-# for i in range(len(data)):
-#     for j in range(len(data.columns)):
-#         val = data.iloc[i][j]
-#         tidsets[val-1].append(i)
-# tidsets
-
-
 # In[8]:
 
 
@@ -90,14 +64,6 @@ data.iloc[0].values
 minsup=0
 minconf=0.8
 k=10
-
-
-
-# In[10]:
-
-
-# itemcount = dict(c.Counter(data.values.flatten()))
-# itemcount
 
 
 # In[11]:
@@ -120,12 +86,6 @@ class MyHeap:
         return len(self._data)
     def __str__(self):
         return str(self._data)
-
-
-# In[ ]:
-
-
-
 
 
 # In[12]:
@@ -151,12 +111,6 @@ def support(rule=((),())):
         if(flagRule):
             sumRule+=1
     return sumRule/len(data)
-
-
-# In[13]:
-
-
-
 
 
 # In[14]:
@@ -206,32 +160,12 @@ ruleDetails=dict()
 L=MyHeap(key=lambda x:-x.support)
 
 
-# In[16]:
-
-
-
-
-# In[18]:
-
-
-
-
-# In[19]:
-
-
-
-
-
-# In[21]:
-
-
-confidence(((2,3),(1,)))
-
-
 # In[22]:
 
 
 def save(L,k,sup,conf,expandSide,rule=((),())):
+    global minsup
+    print(minsup)
     '''if(isinstance(rule[0],int) or isinstance(rule[0],float)):
         if(isinstance(rule[1],int) or isinstance(rule[1],float)):
             rule=[[rule[0]],[rule[1]]]
@@ -246,7 +180,7 @@ def save(L,k,sup,conf,expandSide,rule=((),())):
     elif(max(rule[1])!=largestElement and expandSide=="right"):
         expFlag=False
     L.push(RuleData(rule,sup,conf,expFlag))
-    ruleDetails[rule]=sup
+    ruleDetails[rule]=sup 
     if(expFlag):
         R.push(RuleData(rule,sup,conf,expFlag))
     ruleData=RuleData()
@@ -263,7 +197,7 @@ def save(L,k,sup,conf,expandSide,rule=((),())):
                 ruleData=L.pop()
             else:
                 break
-        
+    
         
     if(not flag):
         return L
@@ -312,7 +246,7 @@ for i in range(len(items)):
 
 # In[26]:
 
-
+print("L with expand flags after step 1")
 for i in L._data:
     print(i[1].support,i[1].rule,i[1].expFlag)
 
@@ -406,45 +340,8 @@ while(R.length()!=0):
 
 
 # In[35]:
-
-
+print()
+print("Support\tConfidence\tRule")
 for i in L._data:
-    print(i[1].support, i[1].confidence, i[1].rule)
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[32]:
-
-
-#L.length()
-
-
-# In[33]:
-
-
-
-# In[34]:
-
-
-# summ=0
-# for i in range(data.shape[0]):
-#     flag=True
-#     for j in ((2,3)):
-#         if j not in list(data.iloc[i,:]):
-#             flag=False
-#             break
-#     if(flag):
-#         print(i)
-#         summ+=1
+    print(round(i[1].support,2),"\t", round(i[1].confidence,2),"\t\t", i[1].rule)
 

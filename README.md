@@ -1,3 +1,3 @@
 # ETARM
-DM First CA research paper
+Data Mining Research Paper Implementation
 Implementation of ETARM: Efficient Top K Association Rule Mining Algorithm
